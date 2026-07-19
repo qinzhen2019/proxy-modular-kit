@@ -44,13 +44,27 @@ def clash_rules(group: dict[str, Any]) -> list[str]:
     return rules
 
 
+def stash_rule_providers(groups: list[dict[str, Any]]) -> dict[str, Any]:
+    providers: dict[str, Any] = {}
+    for group in groups:
+        for upstream in group["upstream"]:
+            name = provider_name(upstream)
+            providers[name] = {
+                "behavior": "classical",
+                "url": clash_url(upstream),
+                "path": f"./ruleset/{name}.yaml",
+                "interval": 86400,
+            }
+    return providers
+
+
 def selectable_groups(groups: list[dict[str, Any]], client: str) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for group in groups:
         if group["policy"] in BUILTIN_POLICIES:
             continue
         item: dict[str, Any] = {"name": group["policy"], "type": "select"}
-        if client == "clash":
+        if client in {"clash", "stash"}:
             item["include-all"] = True
             if group["id"] != "US-Trade":
                 item["proxies"] = ["DIRECT"]
@@ -120,18 +134,22 @@ def stash_override(group: dict[str, Any]) -> dict[str, Any]:
     }
     if group["policy"] not in BUILTIN_POLICIES:
         data["proxy-groups"] = selectable_groups([group], "stash")
-    data["rules"] = module_rules(group)
+    providers = stash_rule_providers([group])
+    if providers:
+        data["rule-providers"] = providers
+    data["rules"] = clash_rules(group)
     return data
 
 
 def all_stash_override(groups: list[dict[str, Any]]) -> dict[str, Any]:
     rules: list[str] = []
     for group in groups:
-        rules.extend(module_rules(group))
+        rules.extend(clash_rules(group))
     return {
         "name": "Proxy Modular Kit",
-        "desc": "模块化策略组和高优先级规则；请按 README 替换上游节点组名",
+        "desc": "模块化策略组和高优先级规则；策略组直接引用配置中的全部节点",
         "proxy-groups": selectable_groups(groups, "stash"),
+        "rule-providers": stash_rule_providers(groups),
         "rules": rules,
     }
 

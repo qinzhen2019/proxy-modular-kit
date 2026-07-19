@@ -4,9 +4,25 @@ desc: 生成式 AI 与开发助手
 proxy-groups:
 - name: 🤖 AI
   type: select
+  include-all: true
   proxies:
-  - 🚀 节点选择
   - DIRECT
+rule-providers:
+  blackmatrix7-OpenAI:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml
+    path: ./ruleset/blackmatrix7-OpenAI.yaml
+    interval: 86400
+  blackmatrix7-Claude:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Claude/Claude.yaml
+    path: ./ruleset/blackmatrix7-Claude.yaml
+    interval: 86400
+  blackmatrix7-Gemini:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml
+    path: ./ruleset/blackmatrix7-Gemini.yaml
+    interval: 86400
 rules:
 - DOMAIN-SUFFIX,cursor.com,🤖 AI
 - DOMAIN-SUFFIX,cursor.sh,🤖 AI
@@ -17,6 +33,6 @@ rules:
 - DOMAIN-SUFFIX,perplexity.ai,🤖 AI
 - DOMAIN-SUFFIX,grok.com,🤖 AI
 - DOMAIN-SUFFIX,x.ai,🤖 AI
-- RULE-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/OpenAI/OpenAI.list,🤖 AI
-- RULE-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Claude/Claude.list,🤖 AI
-- RULE-SET,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Gemini/Gemini.list,🤖 AI
+- RULE-SET,blackmatrix7-OpenAI,🤖 AI
+- RULE-SET,blackmatrix7-Claude,🤖 AI
+- RULE-SET,blackmatrix7-Gemini,🤖 AI
