@@ -11,3 +11,8 @@
 - 增加固定出口的美股交易策略，以及 AI、GitHub、Google、媒体等独立策略。
 - 增加构建、上游锁定、规则校验和敏感信息扫描脚本。
 - 增加 GitHub Actions 校验与上游规则更新 PR 工作流。
+
+### Fixed
+
+- 修正 Stash 将远程规则 URL 误当作 `RULE-SET` 名称的问题，改为原生 `rule-providers` 引用。
+- Stash 策略组改为直接包含全部节点，交易组不再依赖外部组名或提供 DIRECT 候选。

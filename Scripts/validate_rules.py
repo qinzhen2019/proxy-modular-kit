@@ -169,6 +169,7 @@ def validate_stash(result: Validation) -> None:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
             continue
+        providers = set(data.get("rule-providers", {}))
         groups = data.get("proxy-groups", [])
         names = {
             group.get("name")
@@ -183,15 +184,28 @@ def validate_stash(result: Validation) -> None:
                 group.get("type") == "select", f"{path.name}: only select groups are allowed"
             )
             if group.get("name") == "📈 美股交易":
-                proxies = group.get("proxies", [])
                 result.check(
-                    isinstance(proxies, list) and "DIRECT" in proxies,
-                    f"{path.name}: trade group must expose explicit manual choices",
+                    group.get("include-all") is True,
+                    f"{path.name}: trade group must directly include all nodes",
+                )
+                result.check(
+                    "DIRECT" not in group.get("proxies", []),
+                    f"{path.name}: trade group must not offer DIRECT",
                 )
         allowed = BUILTIN_POLICIES | names
         for rule in data.get("rules", []):
             policy = policy_from_rule(rule) if isinstance(rule, str) else None
             result.check(policy in allowed, f"{path.name}: missing policy for rule {rule!r}")
+            parts = rule.split(",") if isinstance(rule, str) else []
+            if parts and parts[0] == "RULE-SET":
+                result.check(
+                    parts[1] in providers,
+                    f"{path.name}: missing rule provider {parts[1]!r}",
+                )
+                result.check(
+                    not parts[1].startswith(("http://", "https://")),
+                    f"{path.name}: RULE-SET must reference a provider name, not a URL",
+                )
 
 
 def parse_shadowrocket_groups(path: Path) -> set[str]:

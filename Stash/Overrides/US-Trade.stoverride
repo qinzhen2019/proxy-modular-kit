@@ -4,9 +4,7 @@ desc: 富途、moomoo、长桥固定出口
 proxy-groups:
 - name: 📈 美股交易
   type: select
-  proxies:
-  - 🚀 节点选择
-  - DIRECT
+  include-all: true
 rules:
 - DOMAIN-SUFFIX,futunn.com,📈 美股交易
 - DOMAIN-SUFFIX,futu5.com,📈 美股交易

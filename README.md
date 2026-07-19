@@ -64,9 +64,9 @@ Clash-Verge/                   现行扩展配置和可视化编辑器片段
 
 1. 保留现有 JMS 或其他节点订阅。
 2. 如果希望一次启用全部模块，导入 `Stash/Overrides/all.stoverride`；也可只导入某个独立 Override。
-3. Override 默认引用 ACL4SSR 常见组名 `🚀 节点选择`。如果当前订阅没有这个组，导入前将它替换为真实存在的节点组名。
+3. 新增策略组使用 `include-all: true`，会直接列出当前配置的全部节点与远程节点集，不依赖 ACL4SSR 的策略组名称。
 4. 确认 Override 将规则插入原规则顶部；不要对原配置的整个 `rules` 数组做 replace。
-5. 在 `📈 美股交易` 中直接选择具体节点。
+5. 在 `📈 美股交易` 中直接选择具体节点；交易组不提供 DIRECT 候选。
 
 不同 Stash 版本或订阅模板对 Override 合并细节可能不同。导入后必须在最终配置预览中确认新增策略组存在，且交易规则位于 `GEOIP,CN,DIRECT` 和 MATCH / FINAL 之前。
 
@@ -145,7 +145,7 @@ python3 -m venv .venv
 
 1. JMS 原始订阅是否能在客户端直接刷新，节点是否可单独连通。
 2. 客户端运行时配置中是否实际存在本仓库的策略组和规则。
-3. Stash 的 `🚀 节点选择` 是否已替换成真实组名。
+3. Stash 的 `📈 美股交易` 是否通过 `include-all` 正确列出订阅节点。
 4. Clash Verge 是否把 `merge.yaml`、`groups.yaml`、`rules.yaml` 放进了各自对应的编辑器。
 5. 远程 rule provider 是否下载成功；失败时查看 GitHub Raw 网络连接和客户端日志。
 6. 交易规则是否在 China、GEOIP CN、MATCH 和 FINAL 之前。
