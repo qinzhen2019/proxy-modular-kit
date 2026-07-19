@@ -1,6 +1,6 @@
 # Proxy Modular Kit
 
-面向 Shadowrocket、Stash 和 Clash Verge Rev / Mihomo 的模块化代理规则仓库。它把“节点”和“流量策略”分离：Just My Socks（JMS）原始订阅只在客户端本地提供节点，本仓库只维护策略组、规则、覆写和扩展片段。
+面向 Shadowrocket、Stash、FlClash、Clash Meta for Android 和 Clash Verge Rev / Mihomo 的模块化代理规则仓库。它把“节点”和“流量策略”分离：Just My Socks（JMS）原始订阅只在客户端本地提供节点，本仓库只维护策略组、规则、覆写和扩展片段。
 
 项目的首要目标是让富途、moomoo、长桥在一次完整会话中使用同一个固定出口 IP，同时让 AI、GitHub、Google、媒体等流量可以独立选择节点。仓库不依赖 ACL4SSR Online 或其他公共订阅转换后端。
 
@@ -28,12 +28,14 @@ Apple Intelligence 暂未混入 Apple 直连规则；需要时应单独建立代
 RuleSets/manifest.json         模块、策略和上游源的统一清单
 RuleSets/*.list                本仓库维护的最小本地规则
 RuleSets/upstream-lock.json    blackmatrix7 内容摘要与变更追踪
-Scripts/build_configs.py       从统一清单生成三端配置
+Scripts/build_configs.py       从统一清单生成桌面与移动端配置
 Scripts/validate_rules.py      语法、引用、重复项和敏感信息校验
 Scripts/update_rules.py        拉取上游内容并刷新锁文件
 Shadowrocket/                  Base.conf 与独立模块
 Stash/Overrides/               全量和独立 Override
 Clash-Verge/                   现行扩展配置和可视化编辑器片段
+Android/FlClash/               FlClash 脚本覆写
+Android/Clash-Meta/            Clash Meta for Android 完整配置模板
 ```
 
 公共服务规则引用活跃维护的 [blackmatrix7/ios_rule_script](https://github.com/blackmatrix7/ios_rule_script)。交易域名和用户补充域名由本仓库维护。所有生成文件都带有 `Generated` 文件头，不应直接编辑。
@@ -85,6 +87,17 @@ Clash-Verge/                   现行扩展配置和可视化编辑器片段
 每个 `Clash-Verge/snippets/<module>.yaml` 是便于审阅和选择性导入的 bundle。它包含 `proxy-groups` 与 `rules` 两个子映射；分别把子映射的 `prepend` / `append` / `delete` 内容粘贴到对应的“编辑代理组”和“编辑规则”编辑器。完整导入时优先使用聚合的 `groups.yaml` 和 `rules.yaml`。
 
 参考：[Clash Verge Rev 扩展配置官方说明](https://clash-verge-rev.github.io/guide/extend.html)。
+
+## Android
+
+Android 客户端的完整步骤见 [`Android/README.md`](Android/README.md)。当前配置针对
+[FlClash v0.8.94](https://github.com/chen08209/FlClash/releases/tag/v0.8.94) 和
+[Clash Meta for Android v2.11.32](https://github.com/MetaCubeX/ClashMetaForAndroid/releases/tag/v2.11.32)。
+
+- FlClash：先导入 JMS Clash/Mihomo 订阅，再把 `Android/FlClash/override.js` 设为该订阅的脚本覆写。脚本只合并策略组、规则源与高优先级规则，保留原订阅节点和兜底规则。
+- Clash Meta for Android：复制 `Android/Clash-Meta/config.template.yaml`，只在手机本地替换 JMS 占位符，然后导入这个本地文件。模板本身不保存任何订阅凭证。
+
+两端的 `📈 美股交易` 都是手动 `select`，直接列出 JMS 节点且不提供 DIRECT。JMS provider 的健康检查只测可用性，不会替手动策略组自动切换出口。
 
 ## 为什么不能只代理“下单请求”
 
@@ -146,11 +159,13 @@ python3 -m venv .venv
 1. JMS 原始订阅是否能在客户端直接刷新，节点是否可单独连通。
 2. 客户端运行时配置中是否实际存在本仓库的策略组和规则。
 3. Stash 的 `📈 美股交易` 是否通过 `include-all` 正确列出订阅节点。
-4. Clash Verge 是否把 `merge.yaml`、`groups.yaml`、`rules.yaml` 放进了各自对应的编辑器。
-5. 远程 rule provider 是否下载成功；失败时查看 GitHub Raw 网络连接和客户端日志。
-6. 交易规则是否在 China、GEOIP CN、MATCH 和 FINAL 之前。
-7. 客户端 DNS / Fake-IP 模式是否导致日志只显示 IP；必要时同时查看 DNS 日志和嗅探结果。
-8. 更新客户端或订阅后，重新预览最终运行时配置，而不是只检查源文件。
+4. FlClash 的订阅是否已切到“脚本”覆写，并选中本仓库脚本。
+5. Clash Meta for Android 的 JMS 占位符是否已在手机本地替换，provider 是否刷新成功。
+6. Clash Verge 是否把 `merge.yaml`、`groups.yaml`、`rules.yaml` 放进了各自对应的编辑器。
+7. 远程 rule provider 是否下载成功；失败时查看 GitHub Raw 网络连接和客户端日志。
+8. 交易规则是否在 China、GEOIP CN、MATCH 和 FINAL 之前。
+9. 客户端 DNS / Fake-IP 模式是否导致日志只显示 IP；必要时同时查看 DNS 日志和嗅探结果。
+10. 更新客户端或订阅后，重新预览最终运行时配置，而不是只检查源文件。
 
 ## 许可证与上游规则
 
