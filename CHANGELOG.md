@@ -11,6 +11,7 @@
 - 增加固定出口的美股交易策略，以及 AI、GitHub、Google、媒体等独立策略。
 - 增加构建、上游锁定、规则校验和敏感信息扫描脚本。
 - 增加 GitHub Actions 校验与上游规则更新 PR 工作流。
+- 增加 FlClash 脚本覆写和 Clash Meta for Android 完整配置模板。
 
 ### Fixed
 

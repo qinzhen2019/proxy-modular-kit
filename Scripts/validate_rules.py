@@ -18,6 +18,7 @@ TEXT_SUFFIXES = {
     "",
     ".conf",
     ".json",
+    ".js",
     ".list",
     ".md",
     ".module",
@@ -54,6 +55,7 @@ RULE_TYPES_WITH_POLICY = {
     "GEOIP",
     "IP-CIDR",
     "IP-CIDR6",
+    "MATCH",
     "PROCESS-NAME",
     "RULE-SET",
 }
@@ -144,6 +146,7 @@ def validate_manifest_and_rules(result: Validation) -> dict[str, Any]:
 def validate_yaml_files(result: Validation) -> None:
     yaml_paths = list((ROOT / "Stash").rglob("*.stoverride"))
     yaml_paths.extend((ROOT / "Clash-Verge").rglob("*.yaml"))
+    yaml_paths.extend((ROOT / "Android" / "Clash-Meta").rglob("*.yaml"))
     for path in yaml_paths:
         try:
             data = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -157,7 +160,7 @@ def policy_from_rule(rule: str) -> str | None:
     parts = [part.strip() for part in rule.split(",")]
     if not parts or parts[0] not in RULE_TYPES_WITH_POLICY:
         return None
-    if parts[0] == "FINAL":
+    if parts[0] in {"FINAL", "MATCH"}:
         return parts[1] if len(parts) >= 2 else None
     if parts[0] in {"RULE-SET", "GEOIP"}:
         return parts[2] if len(parts) >= 3 else None
@@ -290,6 +293,63 @@ def validate_clash(result: Validation) -> None:
             )
 
 
+def validate_android(result: Validation) -> None:
+    template_path = ROOT / "Android" / "Clash-Meta" / "config.template.yaml"
+    template = yaml.safe_load(template_path.read_text(encoding="utf-8"))
+    proxy_providers = template.get("proxy-providers", {})
+    jms = proxy_providers.get("JMS", {})
+    result.check(
+        jms.get("url") == "REPLACE_WITH_JMS_CLASH_SUBSCRIPTION_URL",
+        "Clash Meta: JMS subscription placeholder is missing",
+    )
+    groups = template.get("proxy-groups", [])
+    group_names = {
+        group.get("name")
+        for group in groups
+        if isinstance(group, dict) and isinstance(group.get("name"), str)
+    }
+    for group in groups:
+        if not isinstance(group, dict):
+            result.error("Clash Meta: invalid proxy group entry")
+            continue
+        result.check(group.get("type") == "select", "Clash Meta: groups must use select")
+        result.check("JMS" in group.get("use", []), "Clash Meta: groups must use JMS nodes")
+        if group.get("name") == "📈 美股交易":
+            result.check(
+                "DIRECT" not in group.get("proxies", []),
+                "Clash Meta: trade group must not offer DIRECT",
+            )
+    rule_providers = set(template.get("rule-providers", {}))
+    allowed = BUILTIN_POLICIES | group_names
+    rules = template.get("rules", [])
+    for rule in rules:
+        policy = policy_from_rule(rule) if isinstance(rule, str) else None
+        result.check(policy in allowed, f"Clash Meta: missing policy in {rule!r}")
+        parts = rule.split(",") if isinstance(rule, str) else []
+        if parts and parts[0] == "RULE-SET":
+            result.check(parts[1] in rule_providers, f"Clash Meta: missing provider {parts[1]}")
+    trade_index = next((i for i, rule in enumerate(rules) if "futunn.com" in rule), -1)
+    geoip_index = next((i for i, rule in enumerate(rules) if rule == "GEOIP,CN,DIRECT"), -1)
+    result.check(
+        0 <= trade_index < geoip_index,
+        "Clash Meta: trading rules must precede GEOIP,CN,DIRECT",
+    )
+
+    script_path = ROOT / "Android" / "FlClash" / "override.js"
+    script = script_path.read_text(encoding="utf-8")
+    result.check("const main = (config) =>" in script, "FlClash: main(config) is missing")
+    result.check("📈 美股交易" in script, "FlClash: trade group is missing")
+    result.check("DOMAIN-SUFFIX,futunn.com,📈 美股交易" in script, "FlClash: trade rule missing")
+    result.check(
+        'config["rule-providers"] = Object.assign' in script,
+        "FlClash: rule providers are not merged",
+    )
+    result.check(
+        "originalRules.filter" in script,
+        "FlClash: original subscription rules are not preserved",
+    )
+
+
 def validate_lock(result: Validation) -> None:
     path = RULESETS / "upstream-lock.json"
     result.check(path.is_file(), "RuleSets/upstream-lock.json: run Scripts/update_rules.py")
@@ -327,6 +387,7 @@ def main() -> int:
     validate_stash(result)
     validate_shadowrocket(result)
     validate_clash(result)
+    validate_android(result)
     validate_lock(result)
     validate_generated(result)
     if result.errors:

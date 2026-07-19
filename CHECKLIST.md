@@ -5,7 +5,7 @@
 - [ ] `python3 Scripts/build_configs.py --check` 通过。
 - [ ] `python3 Scripts/validate_rules.py` 通过。
 - [ ] 仓库内没有 JMS 订阅、节点地址、UUID、密码或私有 Token。
-- [ ] 三个客户端中的 `📈 美股交易` 都是 `select`，且没有测速或故障转移。
+- [ ] 五个客户端中的 `📈 美股交易` 都是 `select`，且没有测速或故障转移。
 - [ ] `📈 美股交易` 已直接选择一个稳定的美国节点，而不是自动策略组。
 - [ ] 交易规则位于 `GEOIP,CN,DIRECT`、China 和 FINAL 之前。
 
