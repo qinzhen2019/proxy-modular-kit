@@ -1,0 +1,59 @@
+name: Update upstream rules
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install development dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Refresh upstream lock and generated files
+        run: |
+          python Scripts/update_rules.py
+          python Scripts/build_configs.py
+
+      - name: Validate update
+        run: |
+          ruff check Scripts
+          python Scripts/build_configs.py --check
+          python Scripts/validate_rules.py
+
+      - name: Create update pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/update-upstream-rules
+          delete-branch: true
+          draft: true
+          commit-message: Update upstream rule lock
+          title: Update upstream rule lock
+          body: |
+            ## Summary
+
+            - refresh blackmatrix7 upstream content hashes
+            - rebuild generated client configurations
+
+            ## Validation
+
+            - `ruff check Scripts`
+            - `python Scripts/build_configs.py --check`
+            - `python Scripts/validate_rules.py`
+
+            This PR is intentionally not auto-merged. Review upstream changes before merging.
