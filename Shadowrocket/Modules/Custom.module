@@ -1,0 +1,5 @@
+#!name=自定义规则占位模块
+#!desc=把个性化规则维护在独立模块中；不要写入订阅地址或节点凭证
+
+[Rule]
+# 示例：DOMAIN-SUFFIX,example.com,🚀 通用代理

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "raw_base": "https://raw.githubusercontent.com/qinzhen2019/proxy-modular-kit/main/RuleSets",
+  "groups": [
+    {
+      "id": "US-Trade",
+      "policy": "📈 美股交易",
+      "description": "富途、moomoo、长桥固定出口",
+      "local": "US-Trade.list",
+      "upstream": []
+    },
+    {
+      "id": "AI",
+      "policy": "🤖 AI",
+      "description": "生成式 AI 与开发助手",
+      "local": "AI.list",
+      "upstream": ["OpenAI", "Claude", "Gemini"]
+    },
+    {
+      "id": "GitHub",
+      "policy": "💻 GitHub",
+      "description": "GitHub Web、Git、Raw、Packages 与 Releases",
+      "local": "GitHub.list",
+      "upstream": ["GitHub"]
+    },
+    {
+      "id": "Google",
+      "policy": "🌍 Google",
+      "description": "Google、Gmail、Drive、Translate 与 API",
+      "local": "Google.list",
+      "upstream": ["Google"]
+    },
+    {
+      "id": "Media",
+      "policy": "📺 媒体",
+      "description": "YouTube、Netflix 与 Disney+",
+      "local": "Media.list",
+      "upstream": ["YouTube", "Netflix", "Disney"]
+    },
+    {
+      "id": "Apple",
+      "policy": "DIRECT",
+      "description": "Apple 系统与内容服务直连",
+      "local": "Apple.list",
+      "upstream": ["Apple"]
+    },
+    {
+      "id": "China",
+      "policy": "DIRECT",
+      "description": "中国大陆服务直连",
+      "local": "China.list",
+      "upstream": ["China"]
+    },
+    {
+      "id": "Advertising",
+      "policy": "REJECT",
+      "description": "常见广告域名拦截",
+      "local": "Advertising.list",
+      "upstream": ["Advertising"]
+    },
+    {
+      "id": "Privacy",
+      "policy": "REJECT",
+      "description": "常见隐私追踪域名拦截",
+      "local": "Privacy.list",
+      "upstream": ["Privacy"]
+    }
+  ]
+}
