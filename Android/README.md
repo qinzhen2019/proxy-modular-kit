@@ -6,7 +6,7 @@
 
 FlClash 可以在原始订阅上执行 JavaScript 覆写，因此不需要复制或改写 JMS 订阅地址。
 
-1. 在“配置”中导入 JMS 的 Clash/Mihomo 订阅，并确认节点能正常连接。
+1. 在“配置”中直接导入 JMS 官方的 Mihomo / Clash.Meta YAML 订阅，并确认节点能正常连接；不要经过订阅转换网站。
 2. 打开“工具/配置脚本”，新增脚本，将 [`FlClash/override.js`](FlClash/override.js) 的内容粘贴进去并保存为 `Proxy Modular Kit`。脚本编辑器也支持从远程地址下载。
 3. 回到该 JMS 配置的“覆写”，选择“脚本”，勾选刚保存的 `Proxy Modular Kit`。
 4. 预览最终配置，确认出现 `📈 美股交易`、`🤖 AI`、`💻 GitHub`、`🌍 Google` 和 `📺 媒体`。
@@ -25,7 +25,7 @@ https://raw.githubusercontent.com/qinzhen2019/proxy-modular-kit/main/Android/FlC
 该客户端没有 FlClash 同类的 JavaScript 覆写入口，因此使用完整配置模板：
 
 1. 下载 [`Clash-Meta/config.template.yaml`](Clash-Meta/config.template.yaml)，复制成一个仅保存在手机本地的新文件。
-2. 用文本编辑器将 `REPLACE_WITH_JMS_CLASH_SUBSCRIPTION_URL` 替换为 JMS 的 Clash/Mihomo 订阅 URL，保留模板已有的双引号，不要上传修改后的文件。
+2. 用文本编辑器将 `REPLACE_WITH_JMS_MIHOMO_SUBSCRIPTION_URL` 替换为 JMS 官方的 Mihomo / Clash.Meta YAML 订阅 URL，保留模板已有的双引号，不要上传修改后的文件。
 3. 在 Clash Meta for Android 中从本地文件导入修改后的 YAML，选中它并启动 VPN。
 4. 打开 provider 页面，确认 `JMS` 和 `blackmatrix7-*` 都能刷新成功。
 5. 在 `📈 美股交易` 中直接选择一个具体美国节点，然后清空日志并重新启动富途或长桥做命中测试。
