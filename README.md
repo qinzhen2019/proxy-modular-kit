@@ -1,6 +1,6 @@
 # Proxy Modular Kit
 
-面向 Shadowrocket、Stash、FlClash、Clash Meta for Android 和 Clash Verge Rev / Mihomo 的模块化代理规则仓库。它把“节点”和“流量策略”分离：Just My Socks（JMS）原始订阅只在客户端本地提供节点，本仓库只维护策略组、规则、覆写和扩展片段。
+面向 Shadowrocket、Stash、FlClash、Clash Meta for Android 和 Clash Verge Rev / Mihomo 的模块化代理规则仓库。它把“节点”和“流量策略”分离：Just My Socks（JMS）官方客户端订阅只在客户端本地提供节点，本仓库只维护策略组、规则、覆写和扩展片段。
 
 项目的首要目标是让富途、moomoo、长桥在一次完整会话中使用同一个固定出口 IP，同时让 AI、GitHub、Google、媒体等流量可以独立选择节点。仓库不依赖 ACL4SSR Online 或其他公共订阅转换后端。
 
@@ -42,10 +42,11 @@ Android/Clash-Meta/            Clash Meta for Android 完整配置模板
 
 ## 开始使用前
 
-1. 在对应客户端中直接导入 JMS 原始订阅，让 JMS 只负责节点更新。
-2. 不要把订阅 URL 复制到本仓库、Issue、PR、截图或日志。
-3. 选择一个长期稳定的美国节点供 `📈 美股交易` 使用。
-4. 如果 JMS 凭证曾暴露，先重置 Service Password，使旧链接失效。
+1. Clash Verge Rev、FlClash 等 Mihomo 客户端应直接导入 JMS 官方提供的 **Mihomo / Clash.Meta YAML subscription**，无需订阅转换网站。
+2. Shadowrocket、Stash 则继续使用 JMS 为对应客户端提供的兼容订阅。
+3. 不要把订阅 URL 复制到本仓库、Issue、PR、截图或日志。
+4. 选择一个长期稳定的美国节点供 `📈 美股交易` 使用。
+5. 如果 JMS 凭证曾暴露，先在 JMS 后台轮换订阅凭证，并确认旧链接失效。
 
 ## Shadowrocket
 
@@ -74,15 +75,18 @@ Android/Clash-Meta/            Clash Meta for Android 完整配置模板
 
 ## Clash Verge Rev / Mihomo
 
-本仓库按 Clash Verge Rev **v2.5.1** 的现行扩展机制生成配置。官方文档说明：从 v1.7 起，扩展配置只负责映射项覆写/合并，数组的 prepend / append 已移到订阅右键菜单的可视化编辑器。因此不要把旧式 `prepend-rules` 或 `prepend-proxy-groups` 直接粘进 Merge 配置。
+Clash Verge Rev 直接使用 JMS 官方 Mihomo / Clash.Meta YAML 订阅作为主配置，本仓库作为该订阅的本地扩展层。节点更新直接来自 JMS，不再经过 ACL4SSR Online 或其他转换后端。完整操作与排错见 [`Clash-Verge/README.md`](Clash-Verge/README.md)。
+
+本仓库按 Clash Verge Rev **v2.5.1** 的扩展机制生成配置。官方文档说明：从 v1.7 起，扩展配置只负责映射项覆写/合并，数组的 prepend / append 已移到订阅右键菜单的可视化编辑器。因此不要把旧式 `prepend-rules` 或 `prepend-proxy-groups` 直接粘进 Merge 配置，也不要把 JMS 订阅 URL 写入 `merge.yaml`。
 
 完整导入步骤：
 
-1. 右键订阅，打开“编辑扩展配置”，合并 `Clash-Verge/merge.yaml`。它只增加 `rule-providers` 映射，不覆盖订阅原有的规则或策略组数组。
-2. 右键订阅，打开“编辑代理组”，切换到 YAML，将 `Clash-Verge/snippets/groups.yaml` 的完整内容粘贴进去。
-3. 右键订阅，打开“编辑规则”，切换到 YAML，将 `Clash-Verge/snippets/rules.yaml` 的完整内容粘贴进去。
-4. 保存并查看运行时配置，确认 `📈 美股交易` 位于规则顶部。
-5. `include-all: true` 会把订阅节点列入手动选择组；交易组不提供 DIRECT 候选，导入后仍须直接选择并核对具体美国节点。
+1. 将 JMS 官方 Mihomo / Clash.Meta YAML 订阅 URL 直接导入 Clash Verge Rev，并确认原始配置可刷新、节点可连接。
+2. 右键该订阅，打开“编辑扩展配置”，合并 `Clash-Verge/merge.yaml`。它只增加 `rule-providers` 映射，不覆盖订阅原有的规则或策略组数组。
+3. 右键该订阅，打开“编辑代理组”，切换到 YAML，将 `Clash-Verge/snippets/groups.yaml` 的完整内容粘贴进去。
+4. 右键该订阅，打开“编辑规则”，切换到 YAML，将 `Clash-Verge/snippets/rules.yaml` 的完整内容粘贴进去。
+5. 保存并查看运行时配置，确认 `📈 美股交易` 位于规则顶部。
+6. `include-all: true` 会把订阅节点列入手动选择组；交易组不提供 DIRECT 候选，导入后仍须直接选择并核对具体美国节点。
 
 每个 `Clash-Verge/snippets/<module>.yaml` 是便于审阅和选择性导入的 bundle。它包含 `proxy-groups` 与 `rules` 两个子映射；分别把子映射的 `prepend` / `append` / `delete` 内容粘贴到对应的“编辑代理组”和“编辑规则”编辑器。完整导入时优先使用聚合的 `groups.yaml` 和 `rules.yaml`。
 
@@ -156,7 +160,7 @@ python3 -m venv .venv
 
 按以下顺序检查：
 
-1. JMS 原始订阅是否能在客户端直接刷新，节点是否可单独连通。
+1. JMS 官方客户端订阅是否能直接刷新，订阅格式是否与当前客户端匹配，节点是否可单独连通。
 2. 客户端运行时配置中是否实际存在本仓库的策略组和规则。
 3. Stash 的 `📈 美股交易` 是否通过 `include-all` 正确列出订阅节点。
 4. FlClash 的订阅是否已切到“脚本”覆写，并选中本仓库脚本。
