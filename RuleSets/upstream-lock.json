@@ -1,16 +1,16 @@
 {
-  "checked_at": "2026-07-19T11:12:23+00:00",
+  "checked_at": "2026-09-07T08:19:09+00:00",
   "schema_version": 1,
   "sources": {
     "Advertising": {
       "clash": {
         "bytes": 23869,
-        "sha256": "c99bdede22724dc9cdb7761af6b285854d7cd294b3f5bded1be619e48fd0cfbd",
+        "sha256": "ecd33848ae422c59c1b8fcfd10116f00b5d6a286e6fec3081aac35ae1ec10e7c",
         "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising.yaml"
       },
       "shadowrocket": {
         "bytes": 26853,
-        "sha256": "08e67c4266ee12919ba39e11d09fa7b30f96f309eb07b1d3b115b552016d245e",
+        "sha256": "cd68ad50461eb23c3031c958927a57b3cb100a02ed79b1dddfd831ae9464eff1",
         "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Advertising/Advertising.list"
       }
     },
@@ -22,7 +22,7 @@
       },
       "shadowrocket": {
         "bytes": 1451,
-        "sha256": "379a27cda94feba06a5e29c461e7d97749598b61954d313a0aa271dcf1b6c241",
+        "sha256": "79a36f0a07eb0799fd0a33317ccf6af0e48c1ce748548e37ea48c88ccbe9c02a",
         "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/Apple/Apple.list"
       }
     },
