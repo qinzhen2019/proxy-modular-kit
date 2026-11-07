@@ -14,6 +14,10 @@ venv/
 subscriptions/
 private/
 secrets/
+local-profiles/
+*.local.yaml
+*.private.yaml
+*.secret.yaml
 node-list*
 jms*
 RuleSets/.upstream-cache/

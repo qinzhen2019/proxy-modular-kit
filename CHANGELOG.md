@@ -12,6 +12,13 @@
 - 增加构建、上游锁定、规则校验和敏感信息扫描脚本。
 - 增加 GitHub Actions 校验与上游规则更新 PR 工作流。
 - 增加 FlClash 脚本覆写和 Clash Meta for Android 完整配置模板。
+- 增加 Clash Verge Rev 直接导入 JMS 官方 Mihomo 订阅的独立接入与排错指南。
+- 敏感信息扫描新增 JMS 订阅端点和 UUID 查询凭证检测。
+
+### Changed
+
+- Clash/Mihomo 文档统一改用 JMS 官方 Mihomo / Clash.Meta YAML 订阅，不再把公共转换站作为链路组成部分。
+- Android 模板使用更明确的 Mihomo 订阅占位符，并扩展本地私密配置的忽略规则。
 
 ### Fixed
 

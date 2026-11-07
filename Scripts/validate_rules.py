@@ -38,6 +38,14 @@ IGNORED_PARTS = {
 }
 SECRET_PATTERNS = {
     "proxy URI": re.compile(r"(?:ss|ssr|vmess|vless|trojan|hysteria2)://", re.IGNORECASE),
+    "JMS subscription URL": re.compile(
+        r"https?://(?:www\.)?jmssub\.net/members/getsub\.php\?[^\s#<>]+",
+        re.IGNORECASE,
+    ),
+    "UUID query credential": re.compile(
+        r"[?&]id=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+        re.IGNORECASE,
+    ),
     "credential query parameter": re.compile(
         r"[?&](?:token|password|passwd|service_password|uuid)=[^\s&#<>{}]{6,}",
         re.IGNORECASE,
@@ -299,7 +307,7 @@ def validate_android(result: Validation) -> None:
     proxy_providers = template.get("proxy-providers", {})
     jms = proxy_providers.get("JMS", {})
     result.check(
-        jms.get("url") == "REPLACE_WITH_JMS_CLASH_SUBSCRIPTION_URL",
+        jms.get("url") == "REPLACE_WITH_JMS_MIHOMO_SUBSCRIPTION_URL",
         "Clash Meta: JMS subscription placeholder is missing",
     )
     groups = template.get("proxy-groups", [])
